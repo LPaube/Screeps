@@ -1,11 +1,9 @@
-
 var creepUtility = {
     spawn: function() {
         function parts(role) {
             let parts = [MOVE];
             let curCost = 50;
             let maxEnergy = Game.spawns['Spawn1'].room.energyCapacityAvailable;
-            console.log(maxEnergy);
             while (curCost + 200 <= maxEnergy) {
                 curCost = 0;
                 if (role == 'harvester') {
@@ -27,6 +25,11 @@ var creepUtility = {
                     parts.push(WORK);
                     parts.push(WORK);
                 }
+                if (role == "collector") {
+                    parts.push(MOVE);
+                    parts.push(CARRY);
+                    parts.push(WORK);
+                }
                 for (let i = 0; i < parts.length; i++) {
                     if (parts[i] == MOVE) {
                         curCost += 50;
@@ -36,10 +39,7 @@ var creepUtility = {
                         curCost += 100;
                     }
                 }
-                console.log("role", role);
-                console.log("cur costs", curCost);
             }
-            console.log(parts);
             return parts;
         }
         let target = Game.spawns['Spawn1'].room.find(FIND_CONSTRUCTION_SITES);
@@ -51,25 +51,30 @@ var creepUtility = {
         } 
         else if (this.count('miner') < 2) {
             if (this.count('miner') == 1 && this.count('collector') == 0) {
-                Game.spawns['Spawn1'].spawnCreep([CARRY,CARRY,MOVE,MOVE], 'Collector' + Game.time, {memory: {role: 'collector'}});
+                Game.spawns['Spawn1'].spawnCreep([CARRY,CARRY,MOVE,MOVE], 'Collector' + Game.time, {memory: {role: 'collector', transferring: false}});
             } else {
                 Game.spawns['Spawn1'].spawnCreep(parts('miner'), 'Miner' + Game.time, {memory: {role: 'miner'}});
             }
         }
         else if (this.count('collector') < 2) {
-            Game.spawns['Spawn1'].spawnCreep([CARRY,CARRY,MOVE,MOVE], 'Collector' + Game.time, {memory: {role: 'collector'}});
+            Game.spawns['Spawn1'].spawnCreep([CARRY,CARRY,MOVE,MOVE], 'Collector' + Game.time, {memory: {role: 'collector', transferring: false}});
         }
         else if (this.count('builder') < 2 && target[0]) {
-            Game.spawns['Spawn1'].spawnCreep([MOVE,WORK,WORK,CARRY], 'Builder' + Game.time, {memory: {role: 'builder', transferring: false}});
+            Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,CARRY,WORK], 'Builder' + Game.time, {memory: {role: 'builder', transferring: false}});
         }
-        else if (this.count('upgrader') >= 5) {
-            return;
+        else if (this.count('repairer') < 1) {
+            Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,CARRY,CARRY,WORK], 'Repairer' +Game.time, {memory: {role: 'repairer', transferring: false}});
+        }
+        else if (this.count('collector') < 3) {
+            Game.spawns['Spawn1'].spawnCreep(parts('collector'), 'Collector' + Game.time, {memory: {role: 'collector', transferring: false}});
         }
         else if (this.count('builder') <= this.count('upgrader') && target[0]) {
             Game.spawns['Spawn1'].spawnCreep(parts('builder'), 'Builder' + Game.time, {memory: {role: 'builder', transferring: false}});
             
-        } else if (this.count('upgrader') <= 5) {
+        } else if (this.count('upgrader') <= 6) {
             Game.spawns['Spawn1'].spawnCreep(parts('upgrader'), 'Upgrader' + Game.time, {memory: {role: 'upgrader', transferring: false}});
+        } else {
+            return;
         }
     },
     count: function(role) {

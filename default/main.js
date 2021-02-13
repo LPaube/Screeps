@@ -3,8 +3,8 @@ var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleMiner = require('role.miner');
 var roleCollector = require('role.collector');
+var roleRepairer = require('role.repairer');
 var creepUtility = require('creep.utility');
-
 
 function creepIteration() {
     for (var name in Game.creeps) {
@@ -23,6 +23,9 @@ function creepIteration() {
         }
         if (creep.memory.role == 'collector') {
             roleCollector.run(creep);
+        }
+        if (creep.memory.role == 'repairer') {
+            roleRepairer.run(creep);
         }
     }
 }
