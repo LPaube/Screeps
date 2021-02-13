@@ -1,14 +1,20 @@
 var roleCollector = {
     run: function(creep) {
         if (creep.store.getFreeCapacity() > 0) {
-            let sources = creep.room.find(FIND_SOURCES);
+            let droppedSources = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
             // *Need to change sources dynamically
-            if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0]);
+            if (creep.pickup(droppedSources) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(droppedSources);
             }
         } else {
-            if (creep.transfer(Game.spawns['Spawn1'], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(Game.spawns['Spawn1']);
+            let structs = creep.room.find(FIND_STRUCTURES);
+            let targets = _.filter(structs, function(struct) {
+                return (struct.structureType == STRUCTURE_SPAWN || struct.structureType == STRUCTURE_EXTENSION) && struct.store.getFreeCapacity(RESOURCE_ENERGY) > 0
+            });
+            if (targets.length > 0) {
+                if (creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(targets[0]);
+                }
             }
         }
     }
