@@ -6,10 +6,22 @@ var roleRepairer = {
                 creep.memory.transferring = true;
             }
             // *Need to change sources dynamically
-            else if (creep.pickup(droppedSources) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(droppedSources);
+            else if (droppedSources) {
+                if (creep.pickup(droppedSources) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(droppedSources);
+                }
+            } 
+            else {
+                let storageStructs = creep.room.find(FIND_STRUCTURES);
+                let storageTargets = _.filter(storageStructs, function(storageStruct) {
+                    return (storageStruct.structureType == STRUCTURE_CONTAINER || storageStruct.structureType == STRUCTURE_STORAGE) && storageStruct.store.getUsedCapacity(RESOURCE_ENERGY) > 0
+                });
+                if (creep.withdraw(storageTargets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(storageTargets[0]);
+                }
             }
-        } else if (creep.memory.transferring == true) {
+        } 
+        else if (creep.memory.transferring == true) {
             let targets = creep.room.find(FIND_STRUCTURES, {
                 filter: object => object.hits < object.hitsMax && object.structureType != STRUCTURE_WALL
             });
@@ -17,7 +29,6 @@ var roleRepairer = {
             targets.sort((a,b) => a.hits - b.hits);
             
             if (targets.length > 0) {
-                console.log("target", targets[0]);
                 if (creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0]);
                 }
