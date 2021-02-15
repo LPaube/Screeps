@@ -96,4 +96,16 @@ for (let tower of towers) {
     tower.defend();
     tower.repairing();
 }
-    
+
+ 
+
+function creepRenew() {
+    for (let name in Game.creeps) {
+        let creep = Game.creeps[name];
+        if (creep.ticksToLive < 1000 && creep.pos.isNearTo(Game.spawns['Spawn1']) && Object.keys(Game.creeps).length > 6 && Game.spawns["Spawn1"].room.energyAvailable > 600) {
+            Game.spawns['Spawn1'].renewCreep(creep);
+        }
+    }
+}
+
+creepRenew();

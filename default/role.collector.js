@@ -7,18 +7,29 @@ var roleCollector = {
                 creep.memory.transferring = true;
             }
             // *Need to change sources dynamically
-            else if (droppedSources) {
+            else if (droppedSources[0] && droppedSources.amount > 300) {
                 if (creep.pickup(droppedSources[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(droppedSources[0]);
                 }
             } else {
-                let storageStructs = creep.room.find(FIND_STRUCTURES);
-                let storageTargets = _.filter(storageStructs, function(storageStruct) {
-                    return (storageStruct.structureType == STRUCTURE_CONTAINER || storageStruct.structureType == STRUCTURE_STORAGE) && storageStruct.store.getUsedCapacity(RESOURCE_ENERGY) > 0
+                let containerStructs = creep.room.find(FIND_STRUCTURES);
+                let containerTargets = containerStructs.filter(function(containerStruct) {
+                    return (containerStruct.structureType == STRUCTURE_CONTAINER && containerStruct.store.getUsedCapacity(RESOURCE_ENERGY) > 300)
                 });
-                storageTargets.sort((a,b) => b.store.getUsedCapacity(RESOURCE_ENERGY) - a.store.getUsedCapacity(RESOURCE_ENERGY));
-                if (creep.withdraw(storageTargets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(storageTargets[0]);
+                if (containerTargets[0]) {
+                    if (creep.withdraw(containerTargets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(containerTargets[0]);
+                    }
+                } else {
+                    let storageStructs = creep.room.find(FIND_STRUCTURES);
+                    let storageTargets = storageStructs.filter(function(storageStruct) {
+                        return (storageStruct.structureType == STRUCTURE_STORAGE && storageStruct.store.getUsedCapacity(RESOURCE_ENERGY) > 300)
+                    });
+                    if (storageTargets[0]) {
+                        if (creep.withdraw(storageTargets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(storageTargets[0]);
+                        }
+                    }
                 }
             }
         } else if (creep.memory.transferring == true) {
@@ -28,7 +39,7 @@ var roleCollector = {
             });
             let storageStructs = creep.room.find(FIND_STRUCTURES);
             let storageTargets = _.filter(storageStructs, function(storageStruct) {
-                return (storageStruct.structureType == STRUCTURE_CONTAINER || storageStruct.structureType == STRUCTURE_STORAGE || storageStruct.structureType == STRUCTURE_TOWER) && storageStruct.store.getFreeCapacity(RESOURCE_ENERGY) > 0
+                return (storageStruct.structureType == STRUCTURE_STORAGE || (storageStruct.structureType == STRUCTURE_TOWER && storageStruct.store.getUsedCapacity(RESOURCE_ENERGY) < 700)) && storageStruct.store.getFreeCapacity(RESOURCE_ENERGY) > 0
             });
             storageTargets.sort((a,b) => a.store.getUsedCapacity(RESOURCE_ENERGY) - b.store.getUsedCapacity(RESOURCE_ENERGY));
             

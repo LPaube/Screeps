@@ -57,6 +57,18 @@ var creepUtility = {
             if (this.count('miner') > 1 && this.count('collector') < 2) {
                 Game.spawns['Spawn1'].spawnCreep([CARRY,CARRY,MOVE,MOVE], 'Collector' + Game.time, {memory: {role: 'collector', transferring: false}});
             } else if (this.count('miner') < 2) {
+                for (let name in Game.creeps) {
+                    let creep = Game.creeps[name];
+                    if (creep.memory.role == "miner") {
+                        if (creep.memory.source == 0) {
+                             Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,WORK,WORK], 'Miner' + Game.time, {memory: {role: 'miner', source: 1}});
+                             return;
+                        } else if (creep.memory.source == 1) {
+                             Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,WORK,WORK], 'Miner' + Game.time, {memory: {role: 'miner', source: 0}});
+                             return;
+                        }
+                    }
+                }
                 Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,WORK,WORK], 'Miner' + Game.time, {memory: {role: 'miner', source: randomVar}});
             }
         }
@@ -73,19 +85,30 @@ var creepUtility = {
         else if (this.count('repairer') < 1) {
             Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,CARRY,CARRY,WORK], 'Repairer' + Game.time, {memory: {role: 'repairer', transferring: false}});
         }
-        else if (this.count('repairer') < 2) {
+        else if (this.count('repairer') < 1) {
             Game.spawns['Spawn1'].spawnCreep(parts("repairer"), 'Repairer' + Game.time, {memory: {role: 'repairer', transferring: false}});
         }
         else if (this.count('miner') < 3) {
-            Game.spawns['Spawn1'].spawnCreep(parts('miner'), 'Miner' + Game.time, {memory: {role: 'miner', source: randomVar}});
+            for (let name in Game.creeps) {
+                let creep = Game.creeps[name];
+                if (creep.memory.role == "miner") {
+                    if (creep.memory.source == 0) {
+                         Game.spawns['Spawn1'].spawnCreep(parts("miner"), 'Miner' + Game.time, {memory: {role: 'miner', source: 1}});
+                         return;
+                    } else if (creep.memory.source == 1) {
+                         Game.spawns['Spawn1'].spawnCreep(parts('miner'), 'Miner' + Game.time, {memory: {role: 'miner', source: 0}});
+                         return;
+                    }
+                }
+            }
         }
-        else if (this.count('collector') < 3) {
+        else if (this.count('collector') < 4) {
             Game.spawns['Spawn1'].spawnCreep(parts('collector'), 'Collector' + Game.time, {memory: {role: 'collector', transferring: false}});
         }
-        else if (this.count('builder') < this.count('upgrader') && target[0]) {
+        else if (this.count('builder') < 3 && target[0]) {
             Game.spawns['Spawn1'].spawnCreep(parts('builder'), 'Builder' + Game.time, {memory: {role: 'builder', transferring: false}});
             
-        } else if (this.count('upgrader') <= 5) {
+        } else if (this.count('upgrader') <= 4) {
             Game.spawns['Spawn1'].spawnCreep(parts('upgrader'), 'Upgrader' + Game.time, {memory: {role: 'upgrader', transferring: false}});
         } else {
             return;
