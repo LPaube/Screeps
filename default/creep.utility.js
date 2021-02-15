@@ -118,6 +118,10 @@ var creepUtility = {
             Game.spawns['Spawn1'].spawnCreep(parts('longDistanceMiner'), 'LongDistanceMiner' + Game.time, {memory: {role: 'longDistanceMiner', targetRoom: 'W24S48'}});
         } else if (this.count('longDistanceCollector') < 1) {
             Game.spawns['Spawn1'].spawnCreep(parts('collector'), 'LongDistanceCollector' + Game.time, {memory: {role: 'longDistanceCollector', transferring: false, targetRoom: 'W24S48', homeRoom: 'W25S48'}});
+        } else if (this.count('longDistanceMinerSouth') < 1) {
+            Game.spawns['Spawn1'].spawnCreep(parts('longDistanceMiner'), 'LongDistanceMinerSouth' + Game.time, {memory: {role: 'longDistanceMinerSouth', targetRoom: 'W25S49'}});
+        } else if (this.count('longDistanceCollectorSouth') < 1) {
+            Game.spawns['Spawn1'].spawnCreep(parts('collector'), 'LongDistanceCollectorSouth' + Game.time, {memory: {role: 'longDistanceCollectorSouth', transferring: false, targetRoom: 'W25S49', homeRoom: 'W25S48'}});
         } else if (this.count('upgrader') <= 6) {
             Game.spawns['Spawn1'].spawnCreep(parts('upgrader'), 'Upgrader' + Game.time, {memory: {role: 'upgrader', transferring: false}});
         } else {

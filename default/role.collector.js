@@ -7,7 +7,7 @@ var roleCollector = {
                 creep.memory.transferring = true;
             }
             // *Need to change sources dynamically
-            else if (droppedSources[0] && droppedSources.amount > 300) {
+            else if (droppedSources[0] && droppedSources[0].amount > 300) {
                 if (creep.pickup(droppedSources[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(droppedSources[0]);
                 }
