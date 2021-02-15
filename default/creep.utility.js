@@ -36,6 +36,10 @@ var creepUtility = {
                     parts.push(CARRY);
                     parts.push(CARRY);
                 }
+                if (role == 'longDistanceMiner') {
+                    parts.push(MOVE);
+                    parts.push(WORK);
+                }
                 for (let i = 0; i < parts.length; i++) {
                     if (parts[i] == MOVE) {
                         curCost += 50;
@@ -109,6 +113,12 @@ var creepUtility = {
             Game.spawns['Spawn1'].spawnCreep(parts('builder'), 'Builder' + Game.time, {memory: {role: 'builder', transferring: false}});
             
         } else if (this.count('upgrader') <= 4) {
+            Game.spawns['Spawn1'].spawnCreep(parts('upgrader'), 'Upgrader' + Game.time, {memory: {role: 'upgrader', transferring: false}});
+        } else if (this.count('longDistanceMiner') < 1) {
+            Game.spawns['Spawn1'].spawnCreep(parts('longDistanceMiner'), 'LongDistanceMiner' + Game.time, {memory: {role: 'longDistanceMiner', targetRoom: 'W24S48'}});
+        } else if (this.count('longDistanceCollector') < 1) {
+            Game.spawns['Spawn1'].spawnCreep(parts('collector'), 'LongDistanceCollector' + Game.time, {memory: {role: 'longDistanceCollector', transferring: false, targetRoom: 'W24S48', homeRoom: 'W25S48'}});
+        } else if (this.count('upgrader') <= 6) {
             Game.spawns['Spawn1'].spawnCreep(parts('upgrader'), 'Upgrader' + Game.time, {memory: {role: 'upgrader', transferring: false}});
         } else {
             return;

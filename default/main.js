@@ -4,6 +4,8 @@ var roleBuilder = require('role.builder');
 var roleMiner = require('role.miner');
 var roleCollector = require('role.collector');
 var roleRepairer = require('role.repairer');
+var roleLongDistanceMiner = require('role.longDistanceMiner');
+var roleLongDistanceCollector = require('role.longDistanceCollector');
 var creepUtility = require('creep.utility');
 
 function creepIteration() {
@@ -26,6 +28,12 @@ function creepIteration() {
         }
         if (creep.memory.role == 'repairer') {
             roleRepairer.run(creep);
+        }
+        if (creep.memory.role == 'longDistanceMiner') {
+            roleLongDistanceMiner.run(creep);
+        }
+        if (creep.memory.role == 'longDistanceCollector') {
+            roleLongDistanceCollector.run(creep);
         }
     }
 }
